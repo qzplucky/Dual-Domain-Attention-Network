@@ -58,7 +58,7 @@ class WaveletAttention(nn.Module):
             nn.Linear(in_c//reduction, in_c, bias=False),
             nn.Sigmoid()
         )
-        self.attn_map = None  # 新增：保存小波注意力权重图（C×1×1，通道级）
+        self.attn_map = None  # 保存小波注意力权重图（C×1×1，通道级）
         
     def forward(self, x):
         # 提取低频子带 LL
@@ -86,12 +86,12 @@ class SpatialAttention(nn.Module):
         super().__init__()
         self.conv = nn.Conv2d(2,1,kernel_size,padding=kernel_size//2,bias=False)
         self.sigmoid=nn.Sigmoid()
-        self.attn_map = None  # 新增：保存空间注意力权重图（1×H×W）
+        self.attn_map = None  # 保存空间注意力权重图（1×H×W）
     def forward(self,x):
         avg=torch.mean(x,1,keepdim=True)
         maxv,_=torch.max(x,1,keepdim=True)
         attn=self.sigmoid(self.conv(torch.cat([avg,maxv],1)))
-        self.attn_map = attn  # 保存注意力图（后续可提取）
+        self.attn_map = attn  # 保存注意力图
         print(f"空间注意力统计：均值={attn.mean().item():.4f}, 最大值={attn.max().item():.4f}, 最小值={attn.min().item():.4f}")
         return x*attn
 
@@ -152,16 +152,16 @@ class UnifiedDenoisingUNet(nn.Module):
         u3 = self.up3(u2, x2)
         feats = self.up4(u3, x1)
         
-        # 应用注意力（只取特征张量，忽略注意力图）
+        # 应用注意力
         if self.use_attention:
             feats, _ = self.attention(feats)  # 关键：仅保留特征
         
         # 输出预测结果
         return self.out(feats)
 
-    # 2. 带注意力图的前向传播（可视化/分析用）
+    # 2. 带注意力图的前向传播
     def forward_with_attention(self, x):
-        # 编码/解码路径与 forward 完全一致（确保逻辑同步）
+        # 编码/解码路径与 forward 完全一致
         x1 = self.inc(x)
         x2 = self.down1(x1)
         x3 = self.down2(x2)
@@ -173,10 +173,11 @@ class UnifiedDenoisingUNet(nn.Module):
         u3 = self.up3(u2, x2)
         feats = self.up4(u3, x1)
         
-        # 应用注意力（同时保留特征和注意力图）
+        # 应用注意力
         attention_maps = None
         if self.use_attention:
             feats, attention_maps = self.attention(feats)  # 保留注意力图
         
         # 输出预测结果 + 注意力图
+
         return self.out(feats), attention_maps
