@@ -16,11 +16,7 @@ ablation_configs = {
     # 网络结构消融
     # "no_local_filter": {**base_config, "use_local_filter": False},
     "no_attention": {**base_config, "use_spectral_attention": False},
-    
-    # 数据预处理消融
-    # "fixed_mask": {**base_config, "line_detection_method": "fixed"},
-    # "no_augmentation": {**base_config, "use_spectral_augmentation": False},  #失效模块，取消
-    
+   
     # 组合消融
     "minimal": {
         **base_config,
