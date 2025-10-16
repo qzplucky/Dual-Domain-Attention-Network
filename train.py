@@ -11,10 +11,8 @@ from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 from skimage.metrics import structural_similarity as ssim_metric
 from astropy.io import fits
-# 导入前两个代码中的类
-from dataset import FITSDataset  # 对应第二个代码的数据集
-from unet import *   # 对应第一个代码的模型
-# 导入新增的损失函数
+from dataset import FITSDataset  
+from unet import *   
 from losses import CombinedLoss, SpectralSmoothnessLoss, WaveletLoss
 from adaptive_control import AdaptiveWeightController
 
@@ -260,7 +258,7 @@ class Train:
         plt.close()
 
     def plot_power_spectrum(self, target, noisy, output, epoch):
-        """绘制功率谱：带噪输入 vs GT vs 去噪输出（修复布局警告）"""
+        """绘制功率谱：带噪输入 vs GT vs 去噪输出"""
         def compute_ps(img):
             fft = fftpack.fft2(img)
             fft_shift = fftpack.fftshift(fft)
@@ -337,11 +335,11 @@ class Train:
         heatmap_dir = os.path.join(self.log_dir, 'attention_heatmaps')
         os.makedirs(heatmap_dir, exist_ok=True)
 
-        # ========== 1. 空间注意力热力图（修正：归一化+高对比） ==========
+        # ========== 1. 空间注意力热力图==========
         raw_np = raw[0, 0].cpu().numpy()  # 原图 [H, W]
         spatial_attn_np = spatial_attn.squeeze().cpu().numpy()  # [H, W]
     
-        # 关键：归一化到 [0,1]，强制拉伸数值差异
+        # 关键：归一化到 [0,1]，
         spatial_attn_norm = (spatial_attn_np - spatial_attn_np.min()) / (spatial_attn_np.max() - spatial_attn_np.min() + 1e-8)
     
         self._plot_spatial_heatmap(
@@ -375,7 +373,7 @@ class Train:
         plt.close()
 
     def _plot_wavelet_channel_attn(self, wavelet_attn, alpha, epoch, save_dir):
-        """小波注意力：通道级权重柱状图（空间无差异，改用通道可视化）"""
+        """小波注意力：通道级权重柱状图"""
         wavelet_attn_np = wavelet_attn.squeeze().cpu().numpy()  # 形状 [C]（通道数）
         num_channels = wavelet_attn_np.shape[0]
     
@@ -412,4 +410,5 @@ class Train:
         self.plot_metrics()
         self.save_denoised_fits()
         torch.save(self.model.state_dict(), os.path.join(self.config['save_dir'], 'final_model.pth'))
+
         self.writer.close()
