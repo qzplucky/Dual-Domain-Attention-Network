@@ -37,10 +37,6 @@ train_config = {
     'weight_update_freq': 3,
     'performance_threshold': 0.01,
 
-    # # 局部滤波参数
-    # 'local_kernel_size': 5,
-    # 'line_threshold': 0.9,
-
     # 学习率自适应控制
     'use_lr_scheduler': True,
     'reduce_on_plateau': True,
@@ -52,13 +48,9 @@ train_config = {
     'use_spatial_attention': True,
     'use_wavelet_attention': True,
 
-    # # 数据增强
-    # # 'use_spectral_augmentation': True,
-    # 'augment_absorption_lines': True,
-    # 'absorption_line_prob': 0.3,
-
     # 评估指标
     'eval_metrics': ['psnr', 'ssim', 'mse', 'sre'],
     'early_stopping': True,
     'early_stop_patience': 15,
 }
+
