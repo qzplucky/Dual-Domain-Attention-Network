@@ -68,7 +68,7 @@ class FITSDataset(Dataset):
         return np.clip(noisy, 0, None)  # 确保像素值非负
 
     def _save_debug_visualization(self, raw_data, resized_data, noisy_data, idx):
-        """保存调试图像（仅展示数据，移除Mask相关）"""
+        """保存调试图像"""
         plt.figure(figsize=(12, 6))
         # 1. 原始数据 vs 调整大小后的数据
         plt.subplot(221)
@@ -91,3 +91,4 @@ class FITSDataset(Dataset):
         plt.savefig(os.path.join(self.debug_output_dir, f'sample_{idx}_debug.png'))
 
         plt.close()
+
