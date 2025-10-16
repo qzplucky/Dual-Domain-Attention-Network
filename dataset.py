@@ -28,10 +28,10 @@ class FITSDataset(Dataset):
         with fits.open(file_path) as hdul:
             data = hdul[0].data.astype(np.float32)  # 加载原始光谱数据
 
-        # —— 1. 调整尺寸（保留全图，不再裁剪区域） —— #
+        # —— 1. 调整尺寸 —— #
         data_resized = cv2.resize(data, self.resize_size, interpolation=cv2.INTER_LINEAR)
 
-        # —— 2. 生成带噪数据（双噪声增强鲁棒性） —— #
+        # —— 2. 生成带噪数据 —— #
         data_final = np.ascontiguousarray(data_resized)
         noise_level = random.uniform(*self.noise_level_range)
         noisy1 = self.add_gaussian_noise(data_final, noise_level)
@@ -89,4 +89,5 @@ class FITSDataset(Dataset):
 
         plt.tight_layout()
         plt.savefig(os.path.join(self.debug_output_dir, f'sample_{idx}_debug.png'))
+
         plt.close()
