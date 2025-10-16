@@ -13,8 +13,7 @@ ablation_configs = {
     "no_wavelet_loss": {**base_config, "use_wavelet_loss": False},
     "no_adaptive_weights": {**base_config, "adaptive_weights": False},
     
-    # 网络结构消融
-    # "no_local_filter": {**base_config, "use_local_filter": False},
+
     "no_attention": {**base_config, "use_spectral_attention": False},
    
     # 组合消融
